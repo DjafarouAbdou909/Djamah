@@ -1,0 +1,15 @@
+{% autoescape off %}
+Bonjour {{name}},
+
+Merci de vous être inscrit sur Djamah.
+
+Pour finaliser la création de votre compte et confirmer la réservation de votre adresse e-mail, veuillez cliquer sur le lien ci-dessous :
+
+lien : https//{{domain}}{% url "activate" uidb64=uid token=token %}
+
+Si vous n’êtes pas à l’origine de cette demande, vous pouvez ignorer ce message en toute sécurité.
+
+À très bientôt sur Djamah,
+L’équipe Djamah
+
+{% endautoescape %}
