@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Djamah</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'signup.css' %}">
+</head>
+
+<body>
+
+<main>
+<section class="main">
+
+<div class="container">
+    <h2 class="form-title">Inscription</h2>
+    <p class="form-subtitle">Créez votre compte Djamah</p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form class="form-container" method="post" action="{% url 'signup' %}">
+        {% csrf_token %}
+
+        <div class="input-group">
+            <div class="input-field">
+                <i class="fas fa-user"></i>
+                <input type="text" name="lastname" placeholder="Nom" required>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <div class="input-field">
+                <i class="fas fa-user"></i>
+                <input type="text" name="firstname" placeholder="Prénom" required>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <div class="input-field">
+                <i class="fas fa-envelope"></i>
+                <input type="email" name="email" placeholder="Email" required>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <div class="input-field">
+                <i class="fas fa-graduation-cap"></i>
+                <select name="classe" required>
+                    <option value="" disabled selected>Classe</option>
+                    <option value="2ndeA">2nde A</option>
+                    <option value="2ndeC">2nde C</option>
+                    <option value="1ereA">1ère A</option>
+                    <option value="1ereC">1ère C</option>
+                    <option value="1ereD">1ère D</option>
+                    <option value="TleA">Terminale A</option>
+                    <option value="TleC">Terminale C</option>
+                    <option value="TleD">Terminale D</option>
+                    <option value="L1_INFO">Licence 1 Informatique</option>
+                    <option value="L2_INFO">Licence 2 Informatique</option>
+                    <option value="L3_INFO">Licence 3 Informatique</option>
+                    
+                </select>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <div class="input-field">
+                <input type="password" id="password" name="password" placeholder="Mot de passe" required>
+                <i class="fa-solid fa-eye toggle-password" data-target="password"></i>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <div class="input-field">
+                <input type="password" id="password1" name="password1" placeholder="Confirmer le mot de passe" required>
+                <i class="fa-solid fa-eye toggle-password" data-target="password1"></i>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-container">
+            S'inscrire
+        </button>
+
+        <p class="login-link">
+            Vous avez déjà un compte ? <a href="{% url 'signin' %}">Se connecter</a>
+        </p>
+
+    </form>
+</div>
+
+</section>
+</main>
+
+<script src="{% static 'signup.js' %}"></script>
+</body>
+</html>
+

@@ -1,0 +1,98 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil - Djamah</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'profile.css' %}">
+</head>
+
+<body>
+
+<main>
+    <section class="main">
+        <div class="container">
+            <h2 class="page-title">Mon Profil</h2>
+
+            <form class="profile-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="avatar-section">
+                    <div class="avatar-container" id="avatarContainer">
+                        {% if user.profile.avatar %}
+                            <img src="{{ user.profile.avatar.url }}" alt="Avatar">
+                        {% else %}
+                            <i class="fas fa-user"></i>
+                        {% endif %}
+                    </div>
+
+                    <input type="file" id="avatarInput" name="avatar" accept="image/*" hidden>
+
+                    <button type="button" class="btn-upload" id="uploadBtn">
+                        <i class="fas fa-camera"></i> Choisir une photo
+                    </button>
+
+                    {% if user.profile.avatar %}
+                    <button type="submit" name="remove_avatar" class="btn-remove">
+                        <i class="fas fa-trash"></i> Supprimer
+                    </button>
+                    {% endif %}
+                </div>
+
+                <div class="input-group">
+                    <label>Nom</label>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" name="last_name" value="{{ user.last_name }}" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Prénom</label>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" name="first_name" value="{{ user.first_name }}" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>École / Classe</label>
+                    <div class="input-field">
+                        <i class="fas fa-graduation-cap"></i>
+                        <input type="text" name="ecole" value="{{ user.profile.ecole }}" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Bio</label>
+                    <div class="textarea-field">
+                        <i class="fas fa-pencil"></i>
+                        <textarea name="bio" rows="5" maxlength="200">{{ user.profile.bio }}</textarea>
+                    </div>
+                    <span class="char-count">
+                        <span id="charCount">{{ user.profile.bio|length }}</span>/200
+                    </span>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-save">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
+                    <button type="button" class="btn-cancel" onclick="window.history.back()">
+                        <i class="fas fa-times"></i> Annuler
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </section>
+</main>
+
+<script src="{% static 'profile.js' %}"></script>
+</body>
+</html>

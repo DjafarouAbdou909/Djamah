@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Djamah</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'signin.css' %}">
+</head>
+
+<body>
+
+<main>
+    <section class="main">
+
+        <header class="main-hero">
+            <h2>Connexion</h2>
+            <p>Heureux de vous retrouver à nouveau sur Djamah&nbsp;!</p>
+        </header>
+
+        <div class="container">
+
+            <!-- Affichage des messages -->
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message {{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form class="form-container" method="post" action="{% url 'signin' %}">
+                {% csrf_token %}
+
+                <div class="input-group">
+                    <label for="email">E-mail</label>
+                    <div class="input-field">
+                        <i class="fas fa-envelope" aria-hidden="true"></i>
+                        <input
+                            type="text"
+                            id="email"
+                            name="email"
+                            placeholder="djamah@gmail.com"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Mot de passe</label>
+                    <div class="input-field">
+                        <i class="fas fa-lock" aria-hidden="true"></i>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Veuillez saisir votre mot de passe"
+                            required
+                            autocomplete="current-password"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-links">
+                    <a href="{% url 'resset_password' %}">Mot de passe oublié&nbsp;?</a>
+                </div>
+
+                <button type="submit" class="btn-container">
+                    Connexion
+                </button>
+            </form>
+
+            <p class="signup-link">
+                Vous n'avez pas de compte ?
+                <a href="{% url 'signup' %}">Inscrivez-vous</a>
+            </p>
+        </div>
+
+    </section>
+</main>
+
+</body>
+</html>
+
