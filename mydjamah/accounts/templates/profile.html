@@ -19,7 +19,7 @@
         <div class="container">
             <h2 class="page-title">Mon Profil</h2>
 
-            <form class="profile-form" method="post" enctype="multipart/form-data">
+            <form class="profile-form" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 <div class="avatar-section">
@@ -38,7 +38,7 @@
                     </button>
 
                     {% if user.profile.avatar %}
-                    <button type="submit" name="remove_avatar" class="btn-remove">
+                    <button type="submit" name="remove_avatar" class="btn-remove" id="removeBtn">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>
                     {% endif %}
@@ -48,7 +48,13 @@
                     <label>Nom</label>
                     <div class="input-field">
                         <i class="fas fa-user"></i>
-                        <input type="text" name="last_name" value="{{ user.last_name }}" required>
+                        <input
+                            type="text"
+                            id="lastname"
+                            name="last_name"
+                            value="{{ user.last_name }}"
+                            required
+                        >
                     </div>
                 </div>
 
@@ -56,7 +62,13 @@
                     <label>Prénom</label>
                     <div class="input-field">
                         <i class="fas fa-user"></i>
-                        <input type="text" name="first_name" value="{{ user.first_name }}" required>
+                        <input
+                            type="text"
+                            id="firstname"
+                            name="first_name"
+                            value="{{ user.first_name }}"
+                            required
+                        >
                     </div>
                 </div>
 
@@ -64,7 +76,13 @@
                     <label>École / Classe</label>
                     <div class="input-field">
                         <i class="fas fa-graduation-cap"></i>
-                        <input type="text" name="ecole" value="{{ user.profile.ecole }}" required>
+                        <input
+                            type="text"
+                            id="ecole"
+                            name="ecole"
+                            value="{{ user.profile.ecole }}"
+                            required
+                        >
                     </div>
                 </div>
 
@@ -72,7 +90,12 @@
                     <label>Bio</label>
                     <div class="textarea-field">
                         <i class="fas fa-pencil"></i>
-                        <textarea name="bio" rows="5" maxlength="200">{{ user.profile.bio }}</textarea>
+                        <textarea
+                            id="bio"
+                            name="bio"
+                            rows="5"
+                            maxlength="200"
+                        >{{ user.profile.bio }}</textarea>
                     </div>
                     <span class="char-count">
                         <span id="charCount">{{ user.profile.bio|length }}</span>/200
@@ -96,3 +119,4 @@
 <script src="{% static 'profile.js' %}"></script>
 </body>
 </html>
+

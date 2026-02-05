@@ -12,8 +12,17 @@ urlpatterns = [
 
     #renitialisation du mot de passe
     path('resset_password', view.PasswordResetView.as_view(template_name = "password_reset.html"), name="resset_password"),
-    path('resset_password_send', view.PasswordChangeDoneView.as_view(template_name = "password_reset.html"), name="password_reset_done"),
-    path('reset/<uidb64>/<token>', view.PasswordResetConfirmView.as_view(template_name = "password_reset_form.html"), name="password_reset_confirm"),
+    path('resset_password_send', view.PasswordResetDoneView.as_view(template_name = "password_reset_sent.html"), name="password_reset_done"),
+    path('reset/<uidb64>/<token>/', view.PasswordResetConfirmView.as_view(template_name = "password_reset_form.html"), name="password_reset_confirm"),
     path('reset_password_complete', view.PasswordResetCompleteView.as_view(template_name = "password_reset_done.html"), name="password_reset_complete"),
 
+path(
+    'resset_password',
+    view.PasswordResetView.as_view(
+        template_name="password_reset.html",
+        email_template_name="password_reset_email.html",
+        subject_template_name="password_reset_subject.txt",
+    ),
+    name="resset_password"
+),
 ]

@@ -38,7 +38,6 @@ body {
     width: 100%;
 }
 
-/* Avatar Section */
 .avatar-section {
     display: flex;
     flex-direction: column;
@@ -101,7 +100,6 @@ body {
     background: #D32F2F;
 }
 
-/* Input Groups */
 .input-group {
     margin-bottom: 20px;
 }
@@ -174,7 +172,6 @@ body {
     color: #00BFA6;
 }
 
-/* Boutons */
 .button-group {
     display: flex;
     gap: 12px;
@@ -212,7 +209,6 @@ body {
     background: #F5F5F5;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .container {
         padding: 30px 25px;

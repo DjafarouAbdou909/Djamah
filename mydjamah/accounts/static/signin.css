@@ -22,7 +22,6 @@ body {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
 }
 
-/* En-tête - maintenant dans le conteneur blanc */
 .main-hero {
     padding: 40px 40px 20px;
     text-align: center;
@@ -47,7 +46,6 @@ body {
     color: #607D8B;
 }
 
-/* Formulaire */
 .container {
     padding: 20px 40px 40px;
 }
@@ -167,7 +165,6 @@ body {
     text-decoration: underline;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .main-hero {
         padding: 30px 30px 15px;
