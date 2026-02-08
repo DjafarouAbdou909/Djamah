@@ -1,14 +1,332 @@
+
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accueil</title>
+    <title>Accueil - Djamah</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'home.css' %}">
 </head>
+
 <body>
 
-    <a href="{% url 'signup' %}">Signup</a>
-    <a href="{% url 'signin' %}">Signin</a>
+<!-- NAVBAR -->
+<header class="navbar">
+    <div class="nav-container">
+        <div class="logo">
+            <h1>DJAMAH</h1>
+            <p class="tagline">Ensemble pour mieux apprendre</p>
+        </div>
 
+        <nav class="nav-menu">
+            <a href="{% url 'home' %}" class="nav-link active">
+                <i class="fas fa-home"></i>
+                <span>Accueil</span>
+            </a>
+            {% if user.is_authenticated %}
+            <a href="#" class="nav-link">
+                <i class="fas fa-user"></i>
+                <span>Mon Dashboard</span>
+            </a>
+            <a href="{% url 'create_posts' %}" class="nav-link">
+                <i class="fas fa-plus-circle"></i>
+                <span>Publier</span>
+            </a>
+            {% endif %}
+        </nav>
+
+        <div class="user-actions">
+            {% if user.is_authenticated %}
+            <div class="user-info">
+                <div class="avatar-small">
+                    {% if user.profile.avatar %}
+                        <img src="{{ user.profile.avatar.url }}" alt="Avatar">
+                    {% else %}
+                        <i class="fas fa-user"></i>
+                    {% endif %}
+                </div>
+                <span class="user-name">{{ user.first_name }} {{ user.last_name }}</span>
+            </div>
+            {% else %}
+            <a href="{% url 'signin' %}" class="btn-primary">
+                <i class="fas fa-sign-in-alt"></i> Connexion
+            </a>
+            <a href="{% url 'signup' %}" class="btn-secondary">
+                <i class="fas fa-user-plus"></i> Inscription
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+    <div class="container">
+        
+        <!-- Messages Django -->
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Quick Actions -->
+        {% if user.is_authenticated %}
+        <div class="quick-post-card">
+            <div class="quick-post-header">
+                <div class="avatar-small">
+                    {% if user.profile.avatar %}
+                        <img src="{{ user.profile.avatar.url }}" alt="Avatar">
+                    {% else %}
+                        <i class="fas fa-user"></i>
+                    {% endif %}
+                </div>
+                <a href="{% url 'create_posts' %}" class="quick-post-input">
+                    Que voulez-vous partager aujourd'hui ?
+                </a>
+            </div>
+            <div class="quick-post-actions">
+                <a href="{% url 'create_posts' %}" class="quick-action">
+                    <i class="fas fa-image"></i> Photo
+                </a>
+                <a href="{% url 'create_posts' %}" class="quick-action">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </a>
+                <a href="{% url 'create_posts' %}" class="quick-action">
+                    <i class="fas fa-link"></i> Lien
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Posts Feed -->
+        <div class="posts-feed">
+            {% for post in posts %}
+            <article class="post-card" data-post-id="{{ post.id }}">
+                <!-- Post Header -->
+                <div class="post-header">
+                    <div class="post-author">
+                        <div class="avatar-medium">
+                            {% if post.author.profile.avatar %}
+                                <img src="{{ post.author.profile.avatar.url }}" alt="{{ post.author.first_name }}">
+                            {% else %}
+                                <i class="fas fa-user"></i>
+                            {% endif %}
+                        </div>
+                        <div class="author-info">
+                            <h3 class="author-name">{{ post.author.first_name }} {{ post.author.last_name }}</h3>
+                            <p class="post-time">
+                                <i class="far fa-clock"></i> {{ post.date_posted|timesince }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Post Content -->
+                <div class="post-content">
+                    <p class="post-text">{{ post.content }}</p>
+
+                    {% if post.image %}
+                    <div class="post-image">
+                        <img src="{{ post.image.url }}" alt="Image du post" loading="lazy">
+                    </div>
+                    {% endif %}
+
+                    {% if post.pdf %}
+                    <div class="post-attachment">
+                        <i class="fas fa-file-pdf"></i>
+                        <div class="attachment-info">
+                            <span class="attachment-name">Document PDF</span>
+                            <a href="{{ post.pdf.url }}" target="_blank" class="btn-download">
+                                <i class="fas fa-download"></i> Télécharger
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if post.url %}
+                    <div class="post-link">
+                        <i class="fas fa-link"></i>
+                        <a href="{{ post.url }}" target="_blank" rel="noopener">{{ post.url }}</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Post Stats -->
+                <div class="post-stats">
+                    <span class="stat-item">
+                        <i class="fas fa-heart"></i> {{ post.likes.count }} J'aime
+                    </span>
+                    <span class="stat-item">
+                        <i class="fas fa-comment"></i> {{ post.comments.count }} Commentaire{{ post.comments.count|pluralize }}
+                    </span>
+                </div>
+
+                <!-- Post Actions -->
+                <div class="post-actions">
+                    {% if user.is_authenticated %}
+                    <form method="POST" action="{% url 'create_likes' post.id %}" class="action-form">
+                        {% csrf_token %}
+                        <button
+    class="btn-action {% if post.id in liked_posts %}liked{% endif %}">
+    ❤️
+</button>
+
+                            <i class="fas fa-heart"></i>
+                            <span>J'aime</span>
+                        </button>
+                    </form>
+                    {% else %}
+                    <a href="{% url 'signin' %}" class="btn-action">
+                        <i class="far fa-heart"></i>
+                        <span>J'aime</span>
+                    </a>
+                    {% endif %}
+
+                    <button class="btn-action btn-toggle-comments" data-post="{{ post.id }}">
+                        <i class="fas fa-comment"></i>
+                        <span>Commenter</span>
+                    </button>
+
+                    <button class="btn-action">
+                        <i class="fas fa-share"></i>
+                        <span>Partager</span>
+                    </button>
+                </div>
+
+                <!-- Comments Section -->
+                <div class="comments-section" id="comments-{{ post.id }}">
+                    
+                    <!-- Comment Form -->
+                    {% if user.is_authenticated %}
+                    <div class="comment-form-container">
+                        <form method="POST" action="{% url 'create_comments' post.id %}" class="comment-form">
+                            {% csrf_token %}
+                            <div class="avatar-small">
+                                {% if user.profile.avatar %}
+                                    <img src="{{ user.profile.avatar.url }}" alt="Avatar">
+                                {% else %}
+                                    <i class="fas fa-user"></i>
+                                {% endif %}
+                            </div>
+                            <input 
+                                type="text" 
+                                name="content" 
+                                placeholder="Écrivez un commentaire..." 
+                                required
+                                class="comment-input"
+                            >
+                            <button type="submit" class="btn-send-comment">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+
+                    <!-- Comments List -->
+                    <div class="comments-list">
+                        {% for comment in post.comments.all %}
+                            {% if not comment.parents %}
+                            <div class="comment-item">
+                                <div class="comment-avatar">
+                                    {% if comment.user.profile.avatar %}
+                                        <img src="{{ comment.user.profile.avatar.url }}" alt="{{ comment.user.first_name }}">
+                                    {% else %}
+                                        <i class="fas fa-user"></i>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="comment-content">
+                                    <div class="comment-header">
+                                        <span class="comment-author">{{ comment.user.first_name }} {{ comment.user.last_name }}</span>
+                                        <span class="comment-time">{{ comment.created|timesince }}</span>
+                                    </div>
+                                    <p class="comment-text">{{ comment.content }}</p>
+                                    
+                                    <div class="comment-actions">
+                                        {% if user.is_authenticated %}
+                                        <button class="btn-comment-action btn-toggle-reply" data-comment="{{ comment.id }}">
+                                            <i class="fas fa-reply"></i> Répondre
+                                        </button>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Reply Form -->
+                                    {% if user.is_authenticated %}
+                                    <div class="reply-form-container" id="reply-form-{{ comment.id }}" style="display: none;">
+                                        <form method="POST" action="{% url 'replies_comments' comment.id %}" class="reply-form">
+                                            {% csrf_token %}
+                                            <input 
+                                                type="text" 
+                                                name="content" 
+                                                placeholder="Écrivez une réponse..." 
+                                                required
+                                                class="reply-input"
+                                            >
+                                            <button type="submit" class="btn-send-reply">
+                                                <i class="fas fa-paper-plane"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    {% endif %}
+
+                                    <!-- Replies -->
+                                    {% if comment.reponse.all %}
+                                    <div class="replies-list">
+                                        {% for reply in comment.reponse.all %}
+                                        <div class="reply-item">
+                                            <div class="reply-avatar">
+                                                {% if reply.user.profile.avatar %}
+                                                    <img src="{{ reply.user.profile.avatar.url }}" alt="{{ reply.user.first_name }}">
+                                                {% else %}
+                                                    <i class="fas fa-user"></i>
+                                                {% endif %}
+                                            </div>
+                                            
+                                            <div class="reply-content">
+                                                <div class="reply-header">
+                                                    <span class="reply-author">{{ reply.user.first_name }} {{ reply.user.last_name }}</span>
+                                                    <span class="reply-time">{{ reply.created|timesince }}</span>
+                                                </div>
+                                                <p class="reply-text">{{ reply.content }}</p>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </article>
+            {% empty %}
+            <div class="empty-feed">
+                <i class="fas fa-inbox"></i>
+                <h3>Aucune publication</h3>
+                <p>Soyez le premier à partager quelque chose !</p>
+                {% if user.is_authenticated %}
+                <a href="{% url 'create_posts' %}" class="btn-primary">
+                    <i class="fas fa-plus"></i> Créer une publication
+                </a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+
+<script src="{% static 'home.js' %}"></script>
 </body>
 </html>

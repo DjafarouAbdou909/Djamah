@@ -1,26 +1,21 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.conf import settings
 
 
 class UserManager(BaseUserManager):
     """
-    Manager personnalisé pour le modèle User
-    utilisant l'adresse e-mail comme identifiant principal.
+    Manager personnalisé pour le modèle User utilisant l'e-mail
+    comme identifiant principal.
     """
 
     def create_user(self, email, password=None, **extra_fields):
         """
-        Crée et enregistre un utilisateur avec une adresse e-mail
-        et un mot de passe.
+        Crée et enregistre un utilisateur avec une adresse e-mail et un mot de passe.
         """
         if not email:
             raise ValueError("L'email est obligatoire")
 
-        # Normalisation de l'adresse e-mail
         email = self.normalize_email(email)
-
-        # Création de l'utilisateur
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -28,8 +23,7 @@ class UserManager(BaseUserManager):
 
     def create_superuser(self, email, password=None, **extra_fields):
         """
-        Crée et enregistre un superutilisateur avec
-        toutes les permissions nécessaires.
+        Crée un superutilisateur avec toutes les permissions nécessaires.
         """
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
@@ -46,18 +40,15 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser):
     """
-    Modèle utilisateur personnalisé basé sur AbstractUser
-    avec suppression du champ username et utilisation de l'e-mail
-    comme identifiant principal.
+    Modèle utilisateur personnalisé basé sur AbstractUser.
+    
+    - Suppression du champ username
+    - Utilisation de l'e-mail comme identifiant principal
+    - Gestion du niveau / classe de l'utilisateur
     """
-
-    # Suppression du champ username par défaut
     username = None
-
-    # Champ e-mail unique
     email = models.EmailField(unique=True)
 
-    # Liste des niveaux scolaires / universitaires
     NIVEAU_STUDENT = [
         ('2ndeA', '2nde A'),
         ('2ndeC', '2nde C'),
@@ -72,18 +63,15 @@ class User(AbstractUser):
         ('L3_INFO', 'Licence 3 Informatique'),
     ]
 
-    # Classe / niveau de l'utilisateur
     classe = models.CharField(
         max_length=20,
         choices=NIVEAU_STUDENT,
         blank=True
     )
 
-    # Configuration de l'authentification par e-mail
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    # Association du manager personnalisé
     objects = UserManager()
 
     def __str__(self):
@@ -95,25 +83,19 @@ class User(AbstractUser):
 
 class Profile(models.Model):
     """
-    Modèle de profil lié à l'utilisateur
-    pour stocker des informations complémentaires.
+    Profil lié à l'utilisateur pour stocker des informations complémentaires.
+    
+    - Biographie, photo, école
+    - Relation OneToOne avec le modèle User
     """
-
-    # Relation OneToOne avec le modèle User
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    # Biographie de l'utilisateur
     bio = models.TextField(blank=True)
-
-    # Photo de profil
     avatar = models.ImageField(
         upload_to="profile_images",
         default='image.png',
         blank=True,
         null=True
     )
-
-    # École de l'utilisateur
     ecole = models.CharField(max_length=200, blank=True)
 
     def __str__(self):
@@ -122,3 +104,7 @@ class Profile(models.Model):
         """
         return f"{self.user.first_name}, {self.user.last_name}"
 
+    
+
+
+    

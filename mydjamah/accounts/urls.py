@@ -3,12 +3,12 @@ from . import views
 from django.contrib.auth import views as view
 
 urlpatterns = [
-    path('', views.home, name='home'),
     path('signin/', views.signin, name='signin'),
     path('signup/', views.signup, name='signup'),
     path('profile/', views.profile, name='profile'),
-    path('logout/', views.logOut, name='logout'),
+    path('logOut/', views.logOut, name='logout'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),
+    
 
     #renitialisation du mot de passe
     path('resset_password', view.PasswordResetView.as_view(template_name = "password_reset.html"), name="resset_password"),

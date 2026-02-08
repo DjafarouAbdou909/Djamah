@@ -2,50 +2,47 @@ from django import forms
 from .models import Profile
 from django.contrib.auth import get_user_model
 
-
-# Récupération du modèle User personnalisé
 User = get_user_model()
 
 
 class UpdateUserForm(forms.ModelForm):
     """
     Formulaire de mise à jour des informations de base
-    de l'utilisateur (nom et prénom).
+    de l'utilisateur (prénom et nom).
+    
+    - Personnalisation des widgets pour Bootstrap
+    - Champs obligatoires
     """
 
-    # Champ prénom avec style personnalisé
     first_name = forms.CharField(
         required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
 
-    # Champ nom avec style personnalisé
     last_name = forms.CharField(
         required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
 
     class Meta:
-        # Modèle associé au formulaire
         model = User
-
-        # Champs autorisés à être modifiés
         fields = ['first_name', 'last_name']
 
 
 class UpdateProfileForm(forms.ModelForm):
     """
-    Formulaire de mise à jour du profil utilisateur
-    (photo, bio et établissement scolaire).
+    Formulaire de mise à jour du profil utilisateur.
+
+    - Gère l'avatar, la biographie et l'établissement scolaire
+    - Personnalisation des widgets pour Bootstrap
+    - Support des champs optionnels et obligatoires
     """
 
-    # Champ photo de profil
     avatar = forms.ImageField(
         required=False,
         widget=forms.FileInput(attrs={'class': 'form-control-file'})
     )
 
-    # Champ biographie
     bio = forms.CharField(
         required=False,
         max_length=200,
@@ -55,15 +52,12 @@ class UpdateProfileForm(forms.ModelForm):
         })
     )
 
-    # Champ établissement scolaire
     ecole = forms.CharField(
         required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
 
     class Meta:
-        # Modèle associé au formulaire
         model = Profile
-
-        # Champs autorisés à être modifiés
         fields = ['avatar', 'bio', 'ecole']
+

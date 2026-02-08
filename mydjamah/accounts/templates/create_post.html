@@ -1,0 +1,209 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer une publication - Djamah</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'create_post.css' %}">
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="nav-container">
+        <div class="logo">
+            <h1>DJAMAH</h1>
+        </div>
+
+        <a href="{% url 'home' %}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Retour à l'accueil
+        </a>
+    </div>
+</header>
+
+<main>
+    <div class="container">
+        <div class="create-post-card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-pen"></i> Créer une publication
+                </h2>
+                <p class="card-subtitle">Partagez vos connaissances avec la communauté</p>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data" class="post-form" id="postForm">
+                {% csrf_token %}
+
+                <!-- Author Info -->
+                <div class="author-section">
+                    <div class="avatar-medium">
+                        {% if user.profile.avatar %}
+                            <img src="{{ user.profile.avatar.url }}" alt="Avatar">
+                        {% else %}
+                            <i class="fas fa-user"></i>
+                        {% endif %}
+                    </div>
+                    <div class="author-details">
+                        <span class="author-name">{{ user.first_name }} {{ user.last_name }}</span>
+                        <span class="author-status">
+                            <i class="fas fa-globe"></i> Public
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Content Field -->
+                <div class="form-group">
+                    <label for="id_content">Contenu de votre publication *</label>
+                    <textarea 
+                        name="content" 
+                        id="id_content" 
+                        rows="6" 
+                        required 
+                        class="form-textarea"
+                        placeholder="Partagez une question, une ressource, un conseil..."
+                    >{{ form.content.value|default:'' }}</textarea>
+                    <span class="char-count">
+                        <span id="charCount">0</span> caractères
+                    </span>
+                </div>
+
+                <!-- Media Upload Section -->
+                <div class="media-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-paperclip"></i> Ajouter des médias
+                    </h3>
+
+                    <!-- Image Upload -->
+                    <div class="upload-group">
+                        <label for="id_image" class="upload-label">
+                            <i class="fas fa-image"></i>
+                            <span>Ajouter une image</span>
+                        </label>
+                        <input 
+                            type="file" 
+                            name="image" 
+                            id="id_image" 
+                            accept="image/*"
+                            hidden
+                        >
+                        <div id="imagePreview" class="preview-container" style="display: none;">
+                            <img src="" alt="Aperçu" id="previewImg">
+                            <button type="button" class="btn-remove-preview" id="removeImage">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PDF Upload -->
+                    <div class="upload-group">
+                        <label for="id_pdf" class="upload-label">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>Ajouter un PDF</span>
+                        </label>
+                        <input 
+                            type="file" 
+                            name="pdf" 
+                            id="id_pdf" 
+                            accept=".pdf"
+                            hidden
+                        >
+                        <div id="pdfPreview" class="file-preview" style="display: none;">
+                            <i class="fas fa-file-pdf"></i>
+                            <span id="pdfName">Document.pdf</span>
+                            <button type="button" class="btn-remove-file" id="removePdf">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- URL Input -->
+                    <div class="form-group">
+                        <label for="id_url">
+                            <i class="fas fa-link"></i> Ajouter un lien
+                        </label>
+                        <input 
+                            type="url" 
+                            name="url" 
+                            id="id_url" 
+                            class="form-input"
+                            placeholder="https://exemple.com"
+                            value="{{ form.url.value|default:'' }}"
+                        >
+                    </div>
+                </div>
+
+                <!-- Published Checkbox -->
+                <div class="form-check">
+                    <input 
+                        type="checkbox" 
+                        name="published" 
+                        id="id_published" 
+                        checked
+                        class="form-checkbox"
+                    >
+                    <label for="id_published" class="checkbox-label">
+                        <i class="fas fa-eye"></i> Publier immédiatement
+                    </label>
+                </div>
+
+                <!-- Form Errors -->
+                {% if form.errors %}
+                <div class="form-errors">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                        <div class="error-item">
+                            <i class="fas fa-exclamation-circle"></i>
+                            {{ error }}
+                        </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <a href="{% url 'home' %}" class="btn-cancel">
+                        <i class="fas fa-times"></i> Annuler
+                    </a>
+                    <button type="submit" class="btn-publish">
+                        <i class="fas fa-paper-plane"></i> Publier
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tips Card -->
+        <div class="tips-card">
+            <h3 class="tips-title">
+                <i class="fas fa-lightbulb"></i> Conseils pour une bonne publication
+            </h3>
+            <ul class="tips-list">
+                <li>
+                    <i class="fas fa-check"></i>
+                    Soyez clair et précis dans votre message
+                </li>
+                <li>
+                    <i class="fas fa-check"></i>
+                    Ajoutez des images pour illustrer vos propos
+                </li>
+                <li>
+                    <i class="fas fa-check"></i>
+                    Partagez des ressources utiles (PDF, liens)
+                </li>
+                <li>
+                    <i class="fas fa-check"></i>
+                    Respectez les autres membres de la communauté
+                </li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<script src="{% static 'create_post.js' %}"></script>
+</body>
+</html>

@@ -12,27 +12,18 @@ from django.contrib.sites.shortcuts import get_current_site
 from .tokens import generateToken
 from .forms import UpdateUserForm, UpdateProfileForm
 
-
-# Récupération du modèle User personnalisé
 User = get_user_model()
-
-
-def home(request):
-    """
-    Page d'accueil du site DJAMAH.
-    """
-    return render(request, "index.html")
 
 
 def signup(request):
     """
-    Gère l'inscription des utilisateurs :
-    - vérification des informations
-    - création du compte
-    - envoi de l'e-mail d'activation
+    Gère l'inscription des utilisateurs.
+
+    - Vérifie les informations du formulaire
+    - Crée un compte inactif
+    - Envoie un e-mail de bienvenue et un e-mail d'activation
     """
     if request.method == "POST":
-        # Récupération des données du formulaire
         firstname = request.POST.get("firstname")
         lastname = request.POST.get("lastname")
         email = request.POST.get("email")
@@ -40,22 +31,18 @@ def signup(request):
         password = request.POST.get("password")
         password1 = request.POST.get("password1")
 
-        # Vérifie si l'adresse e-mail est déjà utilisée
         if User.objects.filter(email=email).exists():
             messages.error(request, "Adresse e-mail déjà utilisée.")
             return redirect("signup")
 
-        # Vérifie la correspondance des mots de passe
         if password != password1:
             messages.error(request, "Les mots de passe ne correspondent pas.")
             return redirect("signup")
 
-        # Vérifie la longueur minimale du mot de passe
         if len(password) < 8:
             messages.error(request, "Mot de passe trop court (minimum 8 caractères).")
             return redirect("signup")
 
-        # Création de l'utilisateur (compte inactif par défaut)
         user = User.objects.create_user(email=email, password=password)
         user.first_name = firstname
         user.last_name = lastname
@@ -68,7 +55,6 @@ def signup(request):
             "Compte créé avec succès. Vérifiez votre e-mail pour l’activer."
         )
 
-        # Envoi d'un e-mail de bienvenue simple
         send_mail(
             "Bienvenue sur DJAMAH 🎉",
             f"Bienvenue {firstname} {lastname} !\nMerci de rejoindre DJAMAH.",
@@ -77,7 +63,6 @@ def signup(request):
             fail_silently=False,
         )
 
-        # Préparation de l'e-mail d'activation du compte
         current_site = get_current_site(request)
         email_subject = "Activation de votre compte DJAMAH"
 
@@ -105,18 +90,20 @@ def signup(request):
 def signin(request):
     """
     Gère l'authentification des utilisateurs.
+
+    - Authentifie avec email et mot de passe
+    - Vérifie si le compte est actif
     """
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get("password")
 
-        # Authentification avec email et mot de passe
         user = authenticate(email=email, password=password)
 
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return redirect("profile")
+                return redirect("home")
             else:
                 messages.error(
                     request,
@@ -134,68 +121,49 @@ def signin(request):
 def profile(request):
     """
     Affiche et met à jour le profil de l'utilisateur connecté.
+
+    - Met à jour les informations utilisateur et le profil
+    - Supporte photo, bio et autres champs personnalisés
     """
     if request.method == 'POST':
-        # Formulaire de mise à jour des informations utilisateur
-        user_form = UpdateUserForm(
-            request.POST,
-            instance=request.user
-        )
+        user_form = UpdateUserForm(request.POST, instance=request.user)
+        profile_form = UpdateProfileForm(request.POST, request.FILES, instance=request.user.profile)
 
-        # Formulaire de mise à jour du profil (photo, bio, etc.)
-        profile_form = UpdateProfileForm(
-            request.POST,
-            request.FILES,
-            instance=request.user.profile
-        )
-
-        # Vérifie la validité des deux formulaires
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            messages.success(
-                request,
-                "Profil mis à jour avec succès."
-            )
-            return redirect("profile")
-
+            messages.success(request, "Profil mis à jour avec succès.")
+            return redirect("home")
     else:
-        # Chargement des formulaires avec les données existantes
         user_form = UpdateUserForm(instance=request.user)
         profile_form = UpdateProfileForm(instance=request.user.profile)
 
-    context = {
-        "user_form": user_form,
-        "profile_form": profile_form
-    }
-
+    context = {"user_form": user_form, "profile_form": profile_form}
     return render(request, "profile.html", context)
 
 
 def logOut(request):
     """
-    Déconnecte l'utilisateur actif.
+    Déconnecte l'utilisateur actif et affiche un message de confirmation.
     """
     logout(request)
-    messages.success(
-        request,
-        "Déconnexion réussie. À bientôt sur DJAMAH."
-    )
+    messages.success(request, "Déconnexion réussie. À bientôt sur DJAMAH.")
     return redirect("home")
 
 
 def activate(request, uidb64, token):
     """
     Active le compte utilisateur via le lien envoyé par e-mail.
+
+    - Vérifie le token et l'identifiant utilisateur
+    - Active le compte si le token est valide
     """
     try:
-        # Décodage de l'identifiant utilisateur
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
-    # Vérifie la validité du token d'activation
     if user is not None and generateToken.check_token(user, token):
         user.is_active = True
         user.save()
@@ -210,5 +178,6 @@ def activate(request, uidb64, token):
             "Lien d’activation invalide ou expiré."
         )
         return redirect("home")
+
 
 
