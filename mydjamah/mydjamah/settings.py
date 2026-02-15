@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 # Application definition
 INSTALLED_APPS = [
     #'accounts',
+   
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts.apps.AccountsConfig',
     'publications',
+    'notifications',
+
 
 ]
 
@@ -84,10 +87,15 @@ WSGI_APPLICATION = 'mydjamah.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mydjamah_db',
+        'USER': 'djafarou',
+        'PASSWORD': '17376317E',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
 
 
 # Password validation

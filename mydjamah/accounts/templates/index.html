@@ -16,6 +16,7 @@
 <body>
 
 <!-- NAVBAR -->
+ 
 <header class="navbar">
     <div class="nav-container">
         <div class="logo">
@@ -23,6 +24,15 @@
             <p class="tagline">Ensemble pour mieux apprendre</p>
         </div>
 
+        <a href="{% url 'notifications:list' %}" class="nav-link">
+        <i class="fas fa-bell"></i>
+        <span>Notifications</span>
+    </a>
+
+    <a href="{% url 'profile' %}" class="nav-link">
+        <i class="fas fa-user"></i>
+        <span>Mon Profil</span>
+    </a>
         <nav class="nav-menu">
             <a href="{% url 'home' %}" class="nav-link active">
                 <i class="fas fa-home"></i>
@@ -112,7 +122,8 @@
         <!-- Posts Feed -->
         <div class="posts-feed">
             {% for post in posts %}
-            <article class="post-card" data-post-id="{{ post.id }}">
+            <article id="post-{{ post.id }}" class="post-card" data-post-id="{{ post.id }}">
+
                 <!-- Post Header -->
                 <div class="post-header">
                     <div class="post-author">

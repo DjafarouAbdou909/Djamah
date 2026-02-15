@@ -49,6 +49,16 @@ def create_likes(request, post_id):
     else:
         post.likes.create(user=request.user)
 
+    if post.author != request.user:
+            from notifications.models import Notification
+            Notification.objects.create(
+                sender=request.user,
+                receiver=post.author,
+                notification_type='like',
+                post=post,
+                message=f"{request.user.get_full_name()} a aimé votre post."
+            )
+
     return redirect('home')
 
 

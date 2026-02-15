@@ -1,0 +1,82 @@
+<!-- Component à inclure dans votre navbar -->
+<style>
+    .notification-bell {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 8px;
+        transition: background-color 0.2s;
+    }
+
+    .notification-bell:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .notification-bell-icon {
+        font-size: 1.5rem;
+    }
+
+    .notification-bell-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: #ef4444;
+        color: white;
+        border-radius: 9999px;
+        padding: 0.125rem 0.375rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        min-width: 1.25rem;
+        text-align: center;
+        border: 2px solid white;
+    }
+
+    .notification-bell-badge.hidden {
+        display: none;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+    }
+
+    .notification-bell-badge.pulse {
+        animation: pulse 2s infinite;
+    }
+</style>
+
+<a href="{% url 'notifications:list' %}" class="notification-bell" id="notificationBell">
+    <span class="notification-bell-icon">🔔</span>
+    <span class="notification-bell-badge pulse" id="notificationBadge">0</span>
+</a>
+
+<script>
+    // Mettre à jour le compteur de notifications
+    function updateNotificationCount() {
+        fetch('/notifications/unread-count/')
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.getElementById('notificationBadge');
+                if (badge) {
+                    if (data.count > 0) {
+                        badge.textContent = data.count > 99 ? '99+' : data.count;
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Mettre à jour au chargement de la page
+    document.addEventListener('DOMContentLoaded', updateNotificationCount);
+
+    // Mettre à jour toutes les 30 secondes
+    setInterval(updateNotificationCount, 30000);
+</script>

@@ -10,7 +10,6 @@ class UpdateUserForm(forms.ModelForm):
     Formulaire de mise à jour des informations de base
     de l'utilisateur (prénom et nom).
     
-    - Personnalisation des widgets pour Bootstrap
     - Champs obligatoires
     """
 
@@ -34,7 +33,6 @@ class UpdateProfileForm(forms.ModelForm):
     Formulaire de mise à jour du profil utilisateur.
 
     - Gère l'avatar, la biographie et l'établissement scolaire
-    - Personnalisation des widgets pour Bootstrap
     - Support des champs optionnels et obligatoires
     """
 
